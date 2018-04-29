@@ -1,5 +1,6 @@
-\ onecopy.f
+\ onecopy.SEQ
 \ COPY 1702A TO 1702A
+\ Uses FPC and ASM4004.SEQ
 COMMENT:
 This code runs in the first socket on the left, in
 place of A0540.
@@ -78,7 +79,7 @@ COMMENT;
 
 
 
-INCLUDE ASM4004.f
+INCLUDE ASM4004.SEQ
 HEX
 
 \ Some constants to help make readable code
