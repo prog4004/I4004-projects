@@ -1,2 +1,2 @@
 # I4004-projects
-Various things I don't with the 4004 using Forth.
+Various things I done with the 4004 using Forth.
