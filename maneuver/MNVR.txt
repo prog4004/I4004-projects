@@ -164,6 +164,12 @@ ROTATE
    10 - 40 = 10
 
 
+This is an example of running the simulation. These commands are created as instruments, in MYSIM.f, to attach keyboard 
+and display functions to the code simulator. The text below can be copy and pasted into the win32Forth window once 
+you've loaded the simulator in win32forth ( fload mysim ). If you need to load a decimal point say 54.3 use the format:
+54 N dp 3 N
+There is no decimal point allowed by RNG.
+
 CLR
 CRS 350 N SPD 15 N OS
 TRG 1 N TIM 0910 N BRG 012 N RNG 27600 N 1ST
