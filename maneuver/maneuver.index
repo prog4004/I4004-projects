@@ -1,0 +1,6 @@
+ASM4004.f  I4004 assembler  needs win32Forth to fload
+maneuver.f  Source code for this maneuver board project needs ASM4004.f and mnuvr_LBs.f
+MANEUVER.BBN Binary file created for the I4004 from maneuver.f
+mnuvr_LBs.f predefine labels for maneuver.f ( these could have been in maneuver.f but didn't want the clutter )
+SIM4.f  Simulator for the I4004 loads a binary file ti simulate. Needs win32Forth
+MYSYM.f 
