@@ -38,11 +38,23 @@ Other useful commands in the simulator.
  Y ( Addr - ) executes simulator until the addr and breaks
  G ( Addr Cmd - ) starts the simulator with the keyboard command and breaks at the address. Look at listing for values of key
       board commands. I used mostly $11 that is the CMP command during debug.
- H ( RB - ) shows the status and data feilds of a RAM loaction. Must be used on $10 boundaries to make sense as an example if
-            wanted to see the RAM at location $40 just do $40 H. Data is shown MSNs ( Most significant nibbles ) first to
-            be as one would noramlly look at numbers. Do note that nagative numbers are in 1's complement.
+ H ( RB - ) shows the status and data feilds of a RAM register loaction. Must be used on $10 boundaries to make sense as an 
+            example:
+            If wanted to see the RAM at location $40 just do $40 H. Data is shown MSNs ( Most significant nibbles ) first to
+            be as one would noramlly look at numbers. The memory is organized LSN in the lowest memory address.
+            Do note that nagative numbers are in 1's complement. When the number is negative the lest significant bit of
+            the highest status bit should be set to 1 as well. 
  The binary instruction data is located in ROMCODE array.
  There is more useful stuff in the simulator. Look in MYSIM and SIM4 files for other things that on might need. I do not
  simulate the data written to the ROM I/O that would run an actual display. One has to use the DISP command to see what is
  currently in the display buffer, at any time. This makes more sence then constantly updating the screen with the constant
  noise of it display scan outputs.
+Note that once you have entered any keyboard command, the emulation has been started. It will automatically run the command
+until it does a display command that is part of the keyboard/display loop. This is because all the commands have a built in
+break command at the keyboard input address. One ca look at code in MYSIM to see how this is done. There are some notes
+in the assembly source for addresses. It is possible to start the simulator at any address with PCPNTR! ( Addr - ) but
+usually it is best to use 0 as the address unless you are analysing effects of some subroutine. The BREAK ( addr - ) commnd
+only stops on instruction addresses and not in the middle of an address. One can always use the escape key to stop a runaway.
+One can play with things like the CORDIC routine to make SIN ( $20 ) and COS ( $10 ) with values in the RAM register 
+bank $00 set to the angle created. These are fixed point with 7 digits before the dp and 9 digits after. The angel 45.3 would
+be 0000045300000000. There is also a TAN called CORDICAT.
