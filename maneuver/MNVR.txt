@@ -1,0 +1,192 @@
+98 BLOCKSETUP TARGET NR TO STORAGE LOCATION
+    TARGNR = RB
+    CONTNR = R6
+    REGNR = RC  OUTPUT
+
+829 ZERORAM
+    0 TO @RC
+842 TRANSPART
+     RF COUNT COMPL
+     RA FROM
+     RC TO
+85B DORAM
+     A VALUE
+     RC TO
+    RD= COUNT COMPL
+
+861 FBACK
+    RAM0 LEADING 0'S TO F FOR DISPLAY
+         STOPS AT FIRST NON ZERO
+    RC = DISP REG LOCATION
+    RB = COUNT COMPL
+    
+
+8AF DVT
+    DIVIDE
+    R2/R6 R8 QUOT R6 REMAIN
+
+982 CPLT
+    1'S COMPL R0
+
+99A ADRT
+    @R0 + @R2 = @R0
+
+9AD SBRT
+    @R0 - @R2 = @R0
+
+9C6 TRANSLOOP
+    @R4 TO @R6 + STATUS BIT
+
+A00 CORDITAT
+    ARCTAN  R0 R2 R4 R5 R6 R7 ??/
+
+AA2 ROTATE
+     R0 R2 ??
+
+AEB SHIFT
+    @R2 SHIFTED
+    R9 USED
+
+B00 FERT
+    FETCH CONT TO @R4
+    R2 = ADDR
+    R0 USED
+
+B8A MLRT
+    MULTIPLY
+    @R2 * @R4 = @R6
+
+900 CORDIC
+  00 IS ANGLE
+    00 TO 30
+    -180 TO 40
+    40 + 30 = 30 
+    IF 30 > 180 
+       SKIP1
+    ELSE
+      -270 TO 30
+      30 + 00 = 0
+      -INVK TO 20
+      JOIN1
+     END
+  SKIP1
+      -90 TO 30
+      30 + 00 = 00
+      INVK TO 20
+  JOIN1
+      A1 TO 30  ( 45 )
+      IF 00 POS
+        SKIP2
+      ELSE
+        00 + 30 = 0
+        20 TO 10
+        JOIN2
+      END
+   SKIP2
+      00 - 30 = 00
+      20 TO 10
+      10 TO -10
+   JOIN2
+     2 TO RC   \  967 ???
+     C TO RA
+     JMS SETUPO 
+MLOOP 
+   RETURNED TO RB
+LOOP
+   IF OO POS
+     SKIPX
+   ELSE
+     RD = 0F
+     JOINX
+   END
+SKIPX
+   RD = 0
+JOINX
+   ROTATE
+
+SETUP 86D
+   IF RC = 1 
+     SETUP1
+   ELSEIF RC = 2
+     SETUP2
+   ELSEFI RC = 4
+     SETUP3
+   ELSEIF RC =8
+     SETUP4
+   ELSEIF RC = 0
+    50 = A5
+    RE = 6
+    RETURN 12
+SETUP1
+   RC = 2
+   50= A1
+   RE = 15
+   RETURN 0
+SETUP2
+   RC = 4
+   50 = A2
+   RE = 9
+   RETURN 15
+SETUP3
+   RC = 8
+   50 = A3
+   RE = 7
+   RETURN 14
+SETUP4
+   RC = 0/C ?
+   50 = A4
+   RE = 7
+   RETURN 13
+
+
+ROTATE
+ IF RD = 0
+   00 + 50 = 0
+ ELSE 
+   00 - 50 = 0
+ END 
+ 10 TO 30
+ 20 TO 40
+ R2 END OF 40
+  LAST 40 = RB
+  IF RB = 0 
+    NOSHIFTX
+  ELSE 
+    JMS SHIFT
+  END
+ NOSHIFTX
+   IF RD = 0
+     SX
+   ELSE
+     10 + 40 = 10
+     JX
+   END
+   10 - 40 = 10
+
+
+CLR
+CRS 350 N SPD 15 N OS
+TRG 1 N TIM 0910 N BRG 012 N RNG 27600 N 1ST
+TRG 1 N TIM 0920 N BRG 000 N RNG 22000 N 2ND
+TRG 1 N 
+CMP DISP CR
+TS DISP CR
+
+
+CLR
+CRS 25 N SPD 20 N OS
+TRG 1 N TIM 1400 N BRG 340 N RNG 27000 N 1ST
+TRG 1 N TIM 1406 N BRG 330 N RNG 18800 N 2ND
+TRG 1 N 
+CMP DISP CR
+ TS DISP CR
+
+CLR
+CRS 25 N SPD 20 N OS
+TRG 1 N TIM 1400 N BRG 30 N RNG 27000 N 1ST
+TRG 1 N TIM 1406 N BRG 40 N RNG 18800 N 2ND
+TRG 1 N 
+CMP DISP CR
+
+CMP DISP CR 1 1413.6 349.2 99775.3
+
