@@ -63,10 +63,10 @@ Last bug was missed because I wasn't using the hardware port for the display I w
 I had "00" and it should have been a "CC".
 
 7 segment displays come in two basic types. The decimal point can be to the left of the digit or to the right. On a scanned
-display one has to turn on the decimal point witht he right digit so that it will be between the correct two digits.
-The original source expected the dcimal point to be to the left of the digit. I'd already bought one with the decimal
+display one has to turn on the decimal point with the right digit so that it will be between the correct two digits.
+The original source expected the decimal point to be to the left of the digit. I'd already bought ones with the decimal
 point to the right.
-There are comments in my source but if one doesn't have a compatable assembler, on can still patch the binary.
+There are comments in my source but if one doesn't have a compatable assembler, one can still patch the binary.
 There are 4 locations to patch:
 Addr, Left, Right
 1D8, D2, D1
