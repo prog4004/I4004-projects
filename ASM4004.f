@@ -2,12 +2,29 @@
 \ D K Elvey
 \ Dec 30 1998
 \ Rev 1.04  ADDED R,
+\ March 10 2018
+\ Made a number of fixes for conditional flow Rev 1.05
+\ These overload onto Forth instructions. While doing macros, one may want to use Forth flow structure
+\  instead of ASM4004 code structures. See the word Patch below to show how you might switch to the
+\  Forth vocabulary and back to ASM4004 vocabulary. I use Forth IF ELSE THEN for the Patch word.
+\  The [ forth ] causes the search order to see the Forth vocabulary first instead of the ASM4004.
+\  [ previous ] causes the search order to switch back to the original ASM4004 vocabulary.
+\ There are other ways to deal with the win32forth vocabulary stack but this is the simplest
+\  to remember for a general method.
 
+
+\ Found this with a web search:
+\  Compter Magazine
+\  July/August 1972
+\  SIM4-01  $500
+\  SIM4-02  $750
+\  MP7-02   $400
+\  ROMS $303  ( assume these were A0540, A0541 & A0543 )
+
+vocabulary asm4004
+only forth also asm4004 also definitions
 
 decimal
-
-\ vocabulary ASM4004
-\ ASM4004 definitions
 
 \ ROM array has 4096 bytes
 $10000 value RomSize  \ extra for macros
@@ -96,7 +113,12 @@ DefSeg value CurSeg
 : ORG ( Address - )   \ Sets ROM address
     $0FFF and ROM + to >ROM ;
 
+: .ROM ( - ) \ display next assembly address while assembling
+   >ROM ROM - 1- . ;
+
 0 value MaxRom
+
+
 : ROM, ( cValue - )   \ Stores value into ROM and incr pointer
     $0FF and
     >ROM c!
@@ -155,6 +177,9 @@ $E3 1Op WPM \ 4040 instruction
    Cond $0F and $10 or ROM, ROM,
    0 to Cond ;
 
+: SKIP ( - )
+    0 to Cond 0 JCN -1 +to >ROM ;
+
 : Condition create ,
             does> @ Cond or to Cond ;
    $01 Condition T0
@@ -179,8 +204,9 @@ $E3 1Op WPM \ 4040 instruction
 
 : LB LABEL ;
 
-comment:
- structures
+\ comment:
+\  asm flow structures
+
  : BEGIN ( - Address )
     RHere ;
 
@@ -240,7 +266,7 @@ comment:
 : AGAIN ( Address - )
    JUN ;
 
-Comment;
+\ Comment;
 
 \ Saving output data to binary file
 
@@ -265,6 +291,7 @@ create OutFile  200 allot  0 value OutHandle
 : OpenOutFile ( - )
    OutFile GetFileName
    OutFile count r/w open-file
+   [ forth ]
    if \ didn't open maybe we need to create it
      drop OutFile Count r/w create-file
      if ." Couldn't create file" quit
@@ -278,15 +305,23 @@ create OutFile  200 allot  0 value OutHandle
      OutFile count r/w create-file
      if ." Can't create??" quit then
      to OutHandle
-   then ;
+   then  [ previous ] ;
+
+0 value StartAddr
+
 
 : SAVE-ASM ( - | FileName )  \ Writes Assembled data to file
    OpenOutFile
-   MaxRom $100 /mod swap if 1+ then \ write in 256 byte chunks
+   MaxRom StartAddr - $100 /mod swap if 1+ then \ write in 256 byte chunks
    $100 * .S
-   Rom swap OutHandle write-file ?dup
-   if . ." write error" quit then
+   StartAddr ROM + swap OutHandle write-file ?dup
+   [ forth ]
+   if . ." write error" quit then [ asm4004 ]
    CloseOut ;
+
+: FromTo ( AddrStart AddrLast - ) Used to setup Save-Asm
+   to MaxRom to StarAddr ;
+
 
 \ Some useful macros to deal with index registers and ROM/RAM I/O.
 
@@ -343,7 +378,36 @@ $D CONSTANT RD
 $E CONSTANT RE
 $F CONSTANT RF
 
+: Ram+ ( Ram# Addr - PairValue )  \ Handy calculator for a ram character address
+  dup $3F and swap $40 * + ;
+
 $1000 Seg MacSeg  \ place to put macros
+
+CREATE SBuf $80 allot
+
+: $>N ( $ - n ) \ HEX
+   $30 - dup 9 >
+   [ forth ]
+   if $30 + $DF AND $37 - then [ asm4004 ] ;
+
+: NR, ( - | HexNumberString ) \ assembles numbers
+     \ must be even number of digits
+    $20 WORD
+    COUNT dup>r SBuf swap cmove
+    r> 2/ 0
+    do
+      i 2* dup
+      SBuf + c@ $>N $10 *
+      swap SBUF + 1+ c@ $>N +
+      r,
+    loop
+   ;
+
 
 : DefMac  \ define macro
    ;
+
+forth definitions
+asm4004
+
+
