@@ -124,6 +124,7 @@ ClearInstr
 
 0 VALUE DONE
 
+
 : 4004Engine \ Execute one instruction
     (PC) dup
     to CurInstr

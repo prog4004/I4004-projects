@@ -27,7 +27,7 @@ HEX  \ entry is in BCD for board address in HEX
   $10 0 DO
      I 1 =
      I 6 = OR
-     I $0A = OR IF SPACE THEN \ separates the fields 
+     I $0A = OR IF SPACE THEN \ separates the fields
    \ removed older incorrect decimal point print
    \ status nibble has decimal point location
     $0F I - 4 /mod RamStatus + c@ \ get status nibble
@@ -77,6 +77,7 @@ HEX  \ entry is in BCD for board address in HEX
 
 
 \ test that all works using key inputs
+CR
 WS CLR SPD 15 N DP 0 N CRS 0350 N DP 0 N DISP CR OS
 TRG 1 N BRG 12 N DP TIM 0910 N RNG 27600 N DISP CR 1ST
 TRG 1 N BRG 0 N DP 0 N TIM 0920 N RNG 22000 N DISP CR 2ND
@@ -90,6 +91,22 @@ TS DISP CR
 \ 1 _920_ __0.0 _22000   second for ship 1
 \ 1 0938.9 318.9 _16594  CPA calculation
 \ 1 _____ 269.3 ___19.8  target ships true bearing and speed
+
+
+CR CR
+WS CLR SPD 20 N CRS 25 N DISP CR OS
+TRG 1 N BRG 340 N DP TIM 1400 N RNG 27000 N DISP CR 1ST
+TRG 1 N BRG 330 N DP 0 N TIM 1406 N RNG 18800 N DISP CR 2ND
+TRG 1 N CMP DISP CR
+TS DISP CR
+
+\ should display test case
+\ _ indicate blank display location
+\ _ _____ _25_ ___20_
+\ 1 1400_ 340._ _27000
+\ 1 1406_ 330.0 _18800
+\ 1 1416.6 271.0 __9695
+\ 1 _____ 164.4 ___28.3
 
 
 WS $0C ROMIN 1+ C! WT
