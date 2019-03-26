@@ -98,7 +98,7 @@ Registers 16 erase
 create RomCode $1000 allot \ only 12 bit address
 \ no attempt to optimize space of nibbles to bytes these arrays are byte addressed
 \ but only the low 4 bits are used on each byte
-\ I will addr ess by bytes to make it simple 
+\ I will addr ess by bytes to make it simple
 create RamSpace $10 $10 * 4 * 4 * dup
    allot \ only 16 ea 16 nibble rams
    RamSpace swap erase
@@ -122,17 +122,21 @@ ClearInstr
 
 0 value CurInstr
 
+0 VALUE DONE
+
+
 : 4004Engine \ Execute one instruction
     (PC) dup
     to CurInstr
     IncPc
     cells InstrTable + @ execute
     Cycles EventCycle - 0< If Event execute then
-    PC@ BreakPoint = if quit then ;
+    PC@ BreakPoint = if -1 TO DONE then ;
 
 \ 0 value LastPc
 
 : ToBreak ( BreakPoint - )
+    0 TO DONE
     $0FFF and to BreakPoint
     begin
  \     PC@ to LastPc
@@ -140,8 +144,12 @@ ClearInstr
  \     cycles $0FE and 0=
  \     LastPc PC@ - and
  \     if ." ." 4004Engine  then
-      key? if key drop quit then
-    again ;
+      key? if
+        key drop -1
+      ELSE
+        DONE 0 OR
+      then
+    UNTIL ;
 
 
 
@@ -174,8 +182,8 @@ RomCode value RomLoad
     drop CloseIn
     +to RomLoad
     RomLoad RomCode - h.
-    ."  Rom Loaded" cr 
-   then 
+    ."  Rom Loaded" cr
+   then
   then ;
 
 \ ReadRom 540.bin
@@ -192,7 +200,8 @@ RomCode value RomLoad
    over 3 <> and swap 6 <> and
    (PC) $71 and $21 <> and
    if ( 2 byte instruction )
-     PC@ dup 1+ PC! (PC) 6 .r cr PC!
+     PC@ dup 1+ PC! (PC)
+     DUP $10 / 5 .R $F AND 1 .r cr PC!
    then
    r> base ! ;
 
@@ -213,7 +222,7 @@ RomCode value RomLoad
    ." Regs " 16 0 do i registers + c@ 2 .r
    i 1 and if space then loop cr
    r> base ! ;
-: .t cr .Acc .Reg .stack .Instr 
+: .t cr .Acc .Reg .stack .Instr
     srcval 2 .r ;
 
 : x 4004engine .t ;
@@ -225,14 +234,14 @@ RomCode value RomLoad
      $10 0 do
        i $F and 0= if cr then
        4 0 do
-         DUP  
+         DUP
          RamSpace + c@ $F and 1 .r
          1+
        loop space
        j $10 * i + RamStatus + c@ $F and 1 .r space
      loop
    loop DROP base ! ;
-      
+
 : .RomIn
     cr ." RomIn "  4 0 do i RomIn + c@ . loop ;
 : RomIn! ( value Port - )
@@ -248,7 +257,40 @@ RomCode value RomLoad
 
 0 value Cond  \ Condition for jump
 
+0 value prln
+0 value prpg
+0 VALUE LSTJP
+0 value FLG
+
+: jumps
+    PC@ LSTJP =
+    OVER FLG = AND
+    pc@ $48A $4DD WITHIN           \
+    OR 0= \
+    IF
+      PC@ OVER              \
+      if
+        ."  J"
+      else
+        ."  C"
+      then
+      OVER TO FLG          \ FLG PC@
+      DUP TO LSTJP  \ FLG PC@
+      4 .r          \ FLG
+      1 +to prln     \ FLG
+      prln $10 =       \ FLG PRLN?
+      if 0 to prln CR  \ FLG
+        1 +to prpg
+        prpg $20 =
+        if 0 to prpg
+           CR
+           key ascii A = IF QUIT THEN
+        then          \ FLG
+      then
+    THEN ;
+
 : JumpOn ( flag - 'Cond )
+\ jumps
   if
     PC@ $0F00 and (PC) or PC!
     1 +to cycles
@@ -269,7 +311,7 @@ RomCode value RomLoad
 : JCN
      CurInstr $0F and to Cond
      TestPin 0= 1 and
-     Carry 0= 0= 2 and or
+     Carry 1 AND 0= 0= 2 and or
      Acc 0= 4 and or
      Cond 8 and if Cond 7 and xor then
      Cond and
@@ -389,31 +431,31 @@ RomCode value RomLoad
 ' CMA $F4 cells InstrTable + !
 
 : RAL
-   Carry Acc 2* +
+   Carry 1 AND Acc 2* +
    dup $0F and to Acc
    $10 and 0= 1+ to Carry ;
 
 ' RAL $F5 Cells InstrTable + !
 
 : RAR
-   Acc dup Carry if $10 or then
+   Acc dup Carry 1 AND if $10 or then
    2/ to Acc 1 and to Carry ;
 
 ' RAR $F6 cells InstrTable + !
 
 : TCC
-   Carry to Acc 0 to Carry ;
+   Carry 1 AND to Acc 0 to Carry ;
 
 ' TCC $F7 cells InstrTable + !
 
 : DAC
-   ACC $0F + dup $10 0= 1+ to Carry
+   ACC $0F + dup $10 AND 0= 1+ to Carry
    $0F and to Acc ;
 
 ' DAC $F8 cells InstrTable + !
 
 : TCS
-   1001 Carry + to Acc 0 to Carry ;
+   1001 Carry 1 AND + to Acc 0 to Carry ;
 
 ' TCS $F9 cells InstrTable + !
 
@@ -423,7 +465,13 @@ RomCode value RomLoad
 ' STC $FA cells InstrTable + !
 
 : DAA
-   Carry $9 + to Acc 0 to Carry ;
+   Acc 9 >
+   Carry 1 and or
+   if
+    Acc 6 + dup
+    $0f and to Acc
+    $10 / Carry or to Carry
+   then ;
 
 ' DAA $FB cells InstrTable + !
 
@@ -498,8 +546,8 @@ RomCode value RomLoad
 ' WR3 $E7 cells InstrTable + !
 
 : SBM
-   Acc RamSpace DCLval + c@
-   $0F xor + Carry 1 xor +
+   Acc SrcVal RamSpace + DCLval + c@
+   $0F xor + Carry 1 AND 1 xor +
    dup $10 and 0= 1+ to Carry
    $0F and to Acc ;
 
@@ -513,7 +561,7 @@ RomCode value RomLoad
 
 : ADM
    Acc SrcVal DCLval + RamSpace + c@
-   + Carry +
+   + Carry 1 AND +
    dup $10 and 0= 1+ to Carry
    $0F and to Acc ;
 
@@ -548,6 +596,7 @@ RomCode value RomLoad
     to Acc ;
 
 ' RD3 $EF cells InstrTable + !
+
 
 HEX
 
