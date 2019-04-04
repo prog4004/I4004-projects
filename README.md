@@ -7,6 +7,8 @@ I'll try to note which is which in each file. Files for FPC will be *.SEQ file f
 
 The Maneuver board code is fully working. This is an early code example from a couple students of Gary Kildall.
 
+OneCopy is code I wrote for the sim4-01 and 1702a programmer. Programming 1702As with intel code takes 7 minutes because of the serial is at 110 baud with BPNF coding. OneCopy duplicates a 1702A in about 2 minutes. It only uses the first EPROM socket of the SIM4.
+
 
 
 
