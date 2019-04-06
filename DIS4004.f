@@ -7,6 +7,10 @@
 \ also added optional file out and screen out at the same time
 \ rev 2.01
 
+\ Used:   DisFile FileName.bin
+\  file must be a binary
+\  If in Intel Hex use BinHex.f to convert
+
 decimal
 
 $1000 value RomSize \ 4K
