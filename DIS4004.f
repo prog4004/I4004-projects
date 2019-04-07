@@ -10,6 +10,20 @@
 \ Used:   DisFile FileName.bin
 \  file must be a binary
 \  If in Intel Hex use BinHex.f to convert
+\ DisFile will disasemble from the begining of the of the file
+\ There is a value, PrintFile , if set to -1 will print a lst file if'
+\ set to 0 will only didplay results. Example -1 to PrintFile
+\ One may find the non-intel instruction, SKIP, a little confusing
+\  It will skip over the next byte that used to be the address field for
+\  a JCN instruction. This was often used to have a number of single byte
+\  instructions, say 3 LDM, that could be selectively executed by the
+\  address use by a JMP or a JMS.
+\ DisOne ( address - assress' ) will disasemble one instruction and
+\  return the address of the next instruction
+\ After first disassembly, one may find data fields in the disassembly
+\  These may be skipped by modifiyng the DisFile using standard Forth.
+\ Att the end of a disaasembly will b a list of label address. This
+\  is useful for finding jump and subroutine entrys.
 
 decimal
 
