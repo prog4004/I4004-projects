@@ -1,5 +1,5 @@
 Manuever is a 4004 project. 
-The code is from the NPS in Monterey, Ca. This code was originally written by a student of Garry Kildall. 
+The code is from the NPS in Monterey, Ca. This code was originally written by a student of Gary Kildall. 
 Do a search for:
   microcomputersol00kern.pdf  by Kenneth Harper Kerns
 The listing was done on what looks to be a ASR33 teletype. It had poor registration on the print drum. 
