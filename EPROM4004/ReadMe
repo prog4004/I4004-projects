@@ -1,0 +1,32 @@
+These are EPROMs used on the SIM4-01 Some are intended to go with
+the MP7 programmer card.
+54x.BIN
+ files are to run with a MP7 board to program 1702A. I do not have
+ 542.BIN that would have timing and control bit to program 1702 ( non-A ) 
+ parts. These are the original A0540 parts.
+A074x.HEX
+ are what I've been able to recover of the A0740 to A0743 parts
+ that were from Tom Pittman's 4004 assembler that ran on the SIM4-01.
+ A0740 to A0742 look to be in good shape but A0743 had serious bit rot.
+ I'd love to be able to find this EPROM in good shape or get the code
+ for this one. I expect to type using different thresholds to try and
+ recover remaining bits. 
+ONECOPY.HEX
+ is code I wrote to copy EPROM to EPROM. Using A054x can take 7 minutes
+ for each EPROM programed, because of the slow 110 baud transfer.
+ ONECOPY can copy in 2 minutes. It expexts one to have a SIM4-01 board
+ and a MP7-03 programmer board on a setup, similar to a MCB-410. Examples
+ of such can be found in the Intel 4004 manual for one to make an
+ interface similar to the MCB-410. It also needs the ROM output port 0
+ wired to 4 LED drivers and athe TEST signal switch.
+ Since the SIM4-01 only has 128 bytes of RAM, the EPROM needs to be copied
+ in two passes. The LEDs are to sequence the operation. First LED after
+ reset is to read the fisrt half of the master. Second to program the
+ first half. The third light is to copy the second half of the master
+ and the third to program the third half. Each step is sequenced by the
+ TEST signal switch to the 4004.
+ If there is an error detected in the RAM or in programming the program
+ will light all the lights and hang. This can be cleared by a RESET. Which
+ error RAM or EPROM is determined by the sequence of operation, master or
+ programming.
+ It runs in the left socket of the SIM4-01.
