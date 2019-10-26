@@ -1,4 +1,11 @@
 Manuever is a 4004 project. 
+I have added .asm source code.
+I've converted the Forth RPN source to a more traditional assembler code, with the help of Herb Johnson. Herb has an
+assembler at: http://www.retrotechnology.com/restore/a04.html that is compatable with this source. It produces code that
+is identical with the code I produced. 
+It is hoped that someone may want to use this change the input and output for some other platform, such as the 
+Intel Mod4/40. 
+
 The code is from the NPS in Monterey, Ca. This code was originally written by a student of Gary Kildall. 
 Do a search for:
   microcomputersol00kern.pdf  by Kenneth Harper Kerns
