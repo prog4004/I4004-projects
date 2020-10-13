@@ -20,7 +20,7 @@ A074x.HEX
  what it over writes it with. Tom's assembler uses this overwrite to 
  change modes. Here is a quick test of your favorite simulator. This
  code is written to be compatible with Tom's assembler.
- Also, not, Tom's assembler is written to dirrectly use to program 1702A
+ Also, note, Tom's assembler is written to dirrectly use to program 1702A
  EPROMs for the SIM4-01. The data output is inverted from what most
  simulators expect or the output of most assmblers. Tom's output is in
  Intels BPNF format.
