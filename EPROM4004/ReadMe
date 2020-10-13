@@ -7,10 +7,40 @@ the MP7 programmer card.
 A074x.HEX
  are what I've been able to recover of the A0740 to A0743 parts
  that were from Tom Pittman's 4004 assembler that ran on the SIM4-01.
- A0740 to A0742 look to be in good shape but A0743 had serious bit rot.
- I'd love to be able to find this EPROM in good shape or get the code
- for this one. I expect to type using different thresholds to try and
- recover remaining bits. 
+ // A0740 to A0742 look to be in good shape but A0743 had serious bit rot.
+ // I'd love to be able to find this EPROM in good shape or get the code
+ // for this one. I expect to type using different thresholds to try and
+ // recover remaining bits. 
+ As it turns out, these are correct. With some help from Dave Roberts,
+ I fixed an error in my simulator and was able to successfully run Tom's
+ assembler. Instructions can be had from bitsavers in the "MCS4 user
+ Manual", in Appendix F. As it seems, not all simulators properly emulate
+ the 4004 properly. The stack has a mostly undocmented effect on the
+ 4th JMS. I does overwrite the deepest return. I just isn't clear as to
+ what it over writes it with. Tom's assembler uses this overwrite to 
+ change modes. Here is a quick test of your favorite simulator. This
+ code is written to be compatible with Tom's assembler.
+ Also, not, Tom's assembler is written to dirrectly use to program 1702A
+ EPROMs for the SIM4-01. The data output is inverted from what most
+ simulators expect or the output of most assmblers. Tom's output is in
+ Intels BPNF format.
+
+/ STACK TEST FOR 4004, NOT 4040
+/ ENDS WITH 15 IN ACC SIMULATION IS CORRECT
+ JMS L1
+ LDM 0
+  JUN ENDTEST
+L1,  JMS L2
+  BBL 1
+L2, JMS L3
+  BBL 2
+L3,  JMS L4
+  BBL 3
+L4,  BBL 4
+OVER,  LDM 15
+ENDTEST,  JUN ENDTEST
+$
+
 ONECOPY.HEX
  is code I wrote to copy EPROM to EPROM. Using A054x can take 7 minutes
  for each EPROM programed, because of the slow 110 baud transfer.
